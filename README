@@ -1,0 +1,120 @@
+# GNOME Shell Auto Dark/Light Theme Switcher
+
+A small shell script to automatically switch your **GNOME Shell theme** when dark/light mode changes.  
+
+If you use the **User Themes** extension (e.g., with the Qogir theme), this script ensures your shell theme follows GTK dark/light mode seamlessly — including automatic triggers from the **Night Theme Switcher (NTS)** extension.
+
+---
+
+## Features
+
+- Detects when GNOME switches between dark and light mode
+- Finds and applies dark variants of your shell theme (`-dark`, `_Dark`, etc.)
+- Reverts to the base theme when switching to light mode
+- Works with both **manual theme changes** and **automatic NTS changes**
+- Runs as a **systemd user service** — instant and event-driven
+
+---
+
+## Requirements
+
+- Ubuntu / GNOME (with User Themes extension enabled)
+- Bash
+- Systemd user services
+
+> Tested with the **Qogir** theme, but works with any theme following the standard dark variant naming.
+
+---
+
+## Installation
+
+1. **Clone this repository** (or download the script):
+
+```bash
+git clone <repo-url>
+cd <repo-directory>
+````
+
+2. **Make the script executable**:
+
+```bash
+chmod +x gnome-auto-shell-theme.sh
+```
+
+3. **Move it to your local bin**:
+
+```bash
+mv gnome-auto-shell-theme.sh ~/.local/bin/
+```
+
+4. **Create the systemd user service**:
+
+```bash
+mkdir -p ~/.config/systemd/user/
+nano ~/.config/systemd/user/gnome-auto-shell-theme.service
+```
+
+Paste the following:
+
+```ini
+[Unit]
+Description=Auto switch GNOME Shell theme on dark/light change
+
+[Service]
+Type=simple
+ExecStart=/bin/bash -c '~/.local/bin/gnome-auto-shell-theme.sh; gsettings monitor org.gnome.desktop.interface color-scheme | while read -r _; do ~/.local/bin/gnome-auto-shell-theme.sh; done'
+Restart=always
+RestartSec=1
+
+[Install]
+WantedBy=default.target
+```
+
+5. **Reload systemd and start the service**:
+
+```bash
+systemctl --user daemon-reexec
+systemctl --user daemon-reload
+systemctl --user enable --now gnome-auto-shell-theme.service
+```
+
+6. **Verify it works**:
+
+* Toggle dark/light mode manually in GNOME settings
+* Or wait for NTS to switch automatically
+* Check logs:
+
+```bash
+journalctl --user -u gnome-auto-shell-theme -f
+```
+
+---
+
+## How It Works
+
+1. The script reads the current GTK color scheme.
+2. If dark mode is active, it searches for a dark variant of the currently applied shell theme.
+3. Applies the dark variant if found.
+4. If light mode is active, it restores the original base theme.
+5. Monitored continuously using `gsettings monitor` via systemd.
+
+---
+
+## Notes
+
+* Ensure **User Themes** extension is enabled.
+* Naming convention matters: dark variants should follow patterns like `Theme-dark`, `Theme-Dark`, `Theme_dark`, or `Theme_Dark`.
+* Works with any GNOME Shell theme that follows this convention (tested with **Qogir**).
+
+---
+
+## Contributing
+
+Feel free to open issues or PRs if you encounter edge cases or want to support additional naming conventions.
+
+---
+
+## License
+
+MIT License
+
