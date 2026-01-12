@@ -1,4 +1,3 @@
-```
 # GNOME Shell Auto Dark/Light Theme Switcher
 
 A small shell script to automatically switch your **GNOME Shell theme** when dark/light mode changes.  
@@ -118,4 +117,3 @@ Feel free to open issues or PRs if you encounter edge cases or want to support a
 ## License
 
 MIT License
-```
