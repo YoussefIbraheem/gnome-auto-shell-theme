@@ -4,6 +4,8 @@ A small shell script to automatically switch your **GNOME Shell theme** when dar
 
 If you use the **User Themes** extension (e.g., with the Qogir theme), this script ensures your shell theme follows GTK dark/light mode seamlessly — including automatic triggers from the **Night Theme Switcher (NTS)** extension.
 
+![Example gif](./sample/sample.gif)
+
 ---
 
 ## Features
